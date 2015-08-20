@@ -2,7 +2,7 @@
 Contributors: mbj-webdevelopment
 Tags: woocommerce, customization, customizer
 Requires at least: 3.8
-Tested up to: 4.2.4
+Tested up to: 4.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -11,6 +11,31 @@ Easy WooCommerce Shop Customizer
 == Description ==
 
 = Introduction =
+
+Easily customize woocommerce website with help of this plugin.
+
+    * Automatically add to cart specific product when customer visit site.
+    * Remove specific or All product tabs in single product page view ( product details page).
+    * WooCommerce product details page product tab settings.
+    * Add checkbox in WooCommerce checkout page like (Display terms & conditions) with rename facility.
+    * Set default Country and state on checkout page.
+    * Register or Login on your site by adding a message.
+    * Add custome message on Register or Login page.
+    * Breadcrumbs customization and display in home.
+    * Replace the old page navigation with fancier pagination links.
+    * On/Off Display category image on category archive.
+    * Hide all other shipping methods when free shipping is available.
+    * Allow you to order by price, date or title on your shop page.
+    * Edit the ‘out of stock’ with any text you prefer.
+    * Change the look of your product gallery by customising the number of thumbnails per row.
+    * Allow to set url, after add to cart redirection.
+    * Customise the serach result, search from specific option.
+    * Allow to customise the currency or symbol.
+    * Get rid of, or simply unhook WooCommerce emails.
+    * Allow you to add any custom field to your order emails by hooking in and specifying the name of the custom field.
+    * Customize Shop loop.
+    * Customize checkout page.
+    * Customize tax or vat lable.
 
 == Installation ==
 

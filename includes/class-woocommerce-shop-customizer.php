@@ -1,19 +1,6 @@
 <?php
 
 /**
- * The file that defines the core plugin class
- *
- * A class definition that includes attributes and functions used across both the
- * public-facing side of the site and the admin area.
- *
- * @link       http://localleadminer.com/
- * @since      1.0.0
- *
- * @package    Woocommerce_Shop_Customizer
- * @subpackage Woocommerce_Shop_Customizer/includes
- */
-
-/**
  * The core plugin class.
  *
  * This is used to define internationalization, admin-specific hooks, and
@@ -25,7 +12,7 @@
  * @since      1.0.0
  * @package    Woocommerce_Shop_Customizer
  * @subpackage Woocommerce_Shop_Customizer/includes
- * @author     mbj-webdevelopment <mbjwebdevelopment@gmail.com>
+ * @author     MBJ Technolabs <info@mbjtechnolabs.com>
  */
 class Woocommerce_Shop_Customizer {
 
@@ -66,10 +53,11 @@ class Woocommerce_Shop_Customizer {
 	 *
 	 * @since    1.0.0
 	 */
+         public $loop;
 	public function __construct() {
 
 		$this->plugin_name = 'woocommerce-shop-customizer';
-		$this->version = '1.0.0';
+		$this->version = '1.0.1';
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -149,7 +137,7 @@ class Woocommerce_Shop_Customizer {
 	 * @access   private
 	 */
 	private function define_admin_hooks() {
-
+            
 		$plugin_admin = new Woocommerce_Shop_Customizer_Admin( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
@@ -157,7 +145,7 @@ class Woocommerce_Shop_Customizer {
                 $this->loader->add_action( 'admin_menu', $plugin_admin, 'clivern_plugin_render_options_page' );
                 $this->loader->add_filter( 'loop_shop_columns', $plugin_admin, 'loop_shop_columns_own', 10, 1 );              
                 $this->loader->add_action( 'template_redirect', $plugin_admin, 'add_product_to_cart' );
-                $this->loader->add_filter( 'woocommerce_product_tabs', $plugin_admin, 'woo_remove_product_tabs', 98 );
+                $this->loader->add_filter( 'woocommerce_product_tabs', $plugin_admin, 'woo_remove_product_tabs', 99 );
                 $this->loader->add_filter( 'woocommerce_product_tabs', $plugin_admin, 'woo_reorder_tabs', 98 );
                 $this->loader->add_filter( 'woocommerce_product_tabs', $plugin_admin, 'woo_rename_tab', 98);
                 $this->loader->add_filter( 'woocommerce_product_tabs', $plugin_admin, 'woo_custom_description_tab', 98 );
@@ -169,12 +157,47 @@ class Woocommerce_Shop_Customizer {
                 $this->loader->add_action( 'woocommerce_checkout_update_order_meta', $plugin_admin, 'my_custom_checkout_field_update_order_meta' );
                 $this->loader->add_filter( 'default_checkout_country', $plugin_admin, 'change_default_checkout_country', 10, 2 );
                 $this->loader->add_filter( 'default_checkout_state', $plugin_admin, 'change_default_checkout_state',10 ,2 );         
-                $this->loader->add_filter( 'woocommerce_product_single_add_to_cart_text', $plugin_admin, 'woo_custom_cart_button_text' );
-                $this->loader->add_filter( 'woocommerce_product_add_to_cart_text', $plugin_admin, 'woo_custom_cart_button_text_archive' );
+                $this->loader->add_filter( 'woocommerce_product_single_add_to_cart_text', $plugin_admin, 'woo_custom_cart_button_text', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_product_add_to_cart_text', $plugin_admin, 'woo_custom_cart_button_text_archive', 10, 2 );
+                $this->loader->add_filter( 'loop_shop_per_page', $plugin_admin, 'woo_loop_shop_per_page', 10);                
+                $this->loader->add_action( 'woocommerce_before_customer_login_form', $plugin_admin, 'jk_login_message' );
+                $this->loader->add_filter( 'woocommerce_breadcrumb_defaults', $plugin_admin, 'jk_change_breadcrumb_home_text' );
+                $this->loader->add_filter( 'woocommerce_breadcrumb_home_url', $plugin_admin, 'woo_custom_breadrumb_home_url', 10, 1 );
+                $this->loader->add_action( 'init', $plugin_admin, 'jk_remove_wc_breadcrumbs' );
+                $this->loader->add_action( 'woocommerce_pagination', $plugin_admin, 'woocommerce_pagination', 10);
+                $this->loader->add_filter( 'pre_get_posts', $plugin_admin, 'searchfilter' );
+                $this->loader->add_action('woocommerce_archive_description', $plugin_admin, 'woocommerce_category_image', 10);
+                $this->loader->add_filter( 'woocommerce_package_rates', $plugin_admin, 'hide_shipping_when_free_is_available', 10, 2 );
+                $this->loader->add_filter('woocommerce_default_catalog_orderby', $plugin_admin, 'custom_default_catalog_orderby');
+                $this->loader->add_filter('woocommerce_get_availability', $plugin_admin,'availability_filter_function');
+                $this->loader->add_filter( 'woocommerce_product_thumbnails_columns', $plugin_admin, 'product_gallery_thumb_cols', 10, 1 );
+                $this->loader->add_filter('woocommerce_add_to_cart_redirect', $plugin_admin, 'custom_add_to_cart_redirect', 10, 1);
+                $this->loader->add_action( 'woocommerce_email', $plugin_admin, 'unhook_those_pesky_emails', 10, 1);
+                $this->loader->add_filter('woocommerce_email_order_meta_keys', $plugin_admin, 'my_woocommerce_email_order_meta_keys', 10, 2);
+                $this->loader->add_filter( 'woocommerce_currencies', $plugin_admin, 'add_my_currency' );
+                $this->loader->add_filter( 'woocommerce_currency_symbol', $plugin_admin, 'add_my_currency_symbol', 10, 2 );
+                $this->loader->add_action( 'woocommerce_cart_item_removed', $plugin_admin, 'set_transient_remove_product_from_cart', 10, 1 );
                 $this->loader->add_filter( 'woocommerce_coupons_enabled', $plugin_admin, 'hide_coupon_field' );
+               // $this->loader->add_filter( 'gettext', $plugin_admin, 'woocommerce_rename_coupon_field_on_cart', 10, 3 );
+                $this->loader->add_filter( 'woocommerce_create_account_default_checked', $plugin_admin, 'woo_create_account_default_checked_checkout_page', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_order_button_text', $plugin_admin, 'woo_order_button_text_checkout_page', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_checkout_must_be_logged_in_message', $plugin_admin, 'woo_checkout_must_be_logged_in_message_checkout_page', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_checkout_coupon_message', $plugin_admin, 'woo_checkout_coupon_message_checkout_page', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_checkout_login_message', $plugin_admin, 'woo_checkout_login_message_checkout_page', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_countries_tax_or_vat', $plugin_admin, 'woo_countries_tax_or_vat', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_countries_inc_tax_or_vat', $plugin_admin, 'woo_countries_inc_tax_or_vat', 10, 1 );
+                $this->loader->add_filter( 'woocommerce_countries_ex_tax_or_vat', $plugin_admin, 'woo_countries_ex_tax_or_vat', 10, 1 );
                 
+                $this->loop = get_option('customize_shop_loop_page_value');
+                if ( ! empty( $this->loop ) ) {
+			foreach ( $this->loop as $loop_name => $loop_value ) {
+                       $this->loader->add_filter( 'woocommerce_product_add_to_cart_text', $plugin_admin,'woo_custom_cart_button_text_archive', 10, 2 ); 
+                    }
+                   
+                }
 	}
-
+        
+        
 	/**
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
@@ -187,8 +210,7 @@ class Woocommerce_Shop_Customizer {
 		$plugin_public = new Woocommerce_Shop_Customizer_Public( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
-	}
+       }
 
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.

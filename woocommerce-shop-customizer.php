@@ -5,7 +5,7 @@
  * Plugin Name:       Woo Shop Customizer
  * Plugin URI:        http://localleadminer.com/
  * Description:       This plugin allow user to Customize WooCommerce Shop 
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            mbj-webdevelopment <mbjwebdevelopment@gmail.com>
  * Author URI:        http://localleadminer.com/
  * License:           GPL-2.0+
